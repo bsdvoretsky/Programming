@@ -1,0 +1,31 @@
+;; multi-vector
+(define (mul a)
+  (if (null? a)
+      1
+      (* (car a) (mul (cdr a)))))
+
+(define (mul-list a b)
+  (if (null? a)
+      0
+      (+ (* (car a) (car b)) (mul-list (cdr a) (cdr b)))))
+
+(define (encrease a)
+  (if (= (length a) 1)
+      a
+      (cons (- (car a) 1) (encrease (cdr a)))))
+
+(define (make-multi-vector sizes . fill)
+  (define (inner s . f)
+    (if (not (null? fill))
+        (make-vector (mul sizes) (car fill))
+        (make-vector (mul sizes) 0)))
+  (list sizes (inner sizes fill)))
+
+(define (multi-vector? m)
+  (= (mul (car m)) (length (vector->list (cadr m)))))
+
+(define (multi-vector-set! m indices x)
+  (vector-set! (cadr m) (mul-list (reverse (encrease (car m))) indices) x))
+
+(define (multi-vector-ref m indices)
+  (vector-ref (cadr m) (mul-list (reverse (encrease (car m))) indices)))
