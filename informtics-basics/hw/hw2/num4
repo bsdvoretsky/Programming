@@ -17,7 +17,7 @@
   (list sizes (inner sizes fill)))
 
 (define (multi-vector? m)
-  (= (mul (car m)) (vector-length cadr m)))
+  (and (list? m) (not (null? (car m))) (= (mul (car m)) (vector-length (cadr m)))))
 
 (define (multi-vector-set! m indices x)
   (vector-set! (cadr m) (mul-list (car m) indices (- (length indices) 1)) x))
