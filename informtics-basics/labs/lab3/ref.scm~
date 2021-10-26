@@ -29,7 +29,7 @@
                                                                                         (list-tail (string->list x) (car xs))))))))))
 
 (define tests
-  (list (test (ref '(1 2 3) 1) 2)
+  '((test (ref '(1 2 3) 1) 2)
     (test (ref #(1 2 3) 1) 2)
     (test (ref "123" 1) #\2)
     (test (ref "123" 3) #f)
@@ -40,5 +40,3 @@
     (test (ref "123" 1 0) #f)
     (test (ref "123" 3 #\4) "1234")
     (test (ref "123" 5 #\4) #f)))
-
-(run-tests tests)
