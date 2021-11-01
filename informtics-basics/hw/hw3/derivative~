@@ -1,0 +1,4 @@
+load("unit-test.scm")
+
+(define (derivative exp)
+  cond ((number? exp) (0)))
