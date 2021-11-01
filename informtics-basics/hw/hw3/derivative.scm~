@@ -1,2 +1,0 @@
-(define (derivative exp)
-  cond ((number? exp) (0)))
