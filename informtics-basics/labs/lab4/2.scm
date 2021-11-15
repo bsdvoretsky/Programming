@@ -1,0 +1,17 @@
+(define (save-data data src)
+  (call-with-output-file src (lambda (port) (write data port))))
+
+(define (load-data src)
+  (call-with-input-file src (lambda (port) (read port) (read port))))
+
+(define (count-of-strings src)
+  (let ((port (open-input-file src)))
+    (define (loop counter cs)
+      (let ((char (read-char port)))
+      (if (eof-object? char)
+          (begin (close-input-port port) counter)
+          (if (and (equal? char #\newline) (not (= cs 0)))
+              (loop (+ 1 counter) 0)
+              (if (not (equal? char #\newline))
+                  (loop counter (+ 1 cs))
+                  (loop counter cs)))))) (loop 0 0)))
