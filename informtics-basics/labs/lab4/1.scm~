@@ -1,18 +1,13 @@
 (define call-cc
   call-with-current-continuation)
 
-(define return 0)
-
-(define (use-assertions)
-  (call-cc (lambda (c) (set! return c))))
-
 (define-syntax assert
   (syntax-rules ()
     ((assert e)
-     (if (not e)
-         (begin (display "FAILED: ") (write 'e) (return))))))
-
-(use-assertions)
+     (call-cc
+      (lambda (exit)
+           (if (not e)
+               (exit (begin (display "FAILED: ") (write 'e)))))))))
 
 (define (1/x x)
   (assert (not (zero? x)))
