@@ -1,0 +1,5 @@
+(define (trib n)
+  (cond ((= n 1) 0)
+        ((= n 2) 0)
+        ((= n 3) 1)
+        (else (+ (trib (- n 1)) (trib (- n 2)) (trib (- n 3))))))
