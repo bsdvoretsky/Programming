@@ -1,0 +1,15 @@
+;; A
+(define-syntax when
+  (syntax-rules ()
+    ((when cond? expr1 ...)
+     (if cond?
+         (begin expr1 ...)))))
+(define-syntax unless
+  (syntax-rules ()
+    ((when cond? expr1 ...)
+     (if (not cond?)
+         (begin expr1 ...)))))
+
+(define x 1)
+(when   (> x 0) (display "x > 0")  (newline))
+(unless (= x 0) (display "x != 0") (newline))
