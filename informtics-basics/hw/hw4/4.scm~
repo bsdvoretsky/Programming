@@ -1,0 +1,14 @@
+(define-syntax define-struct
+  (syntax-rules ()
+    ((define-struct type (v1 ...))
+     (let ((struct (append (list 'type) `(((v1) ...)))))
+       (define (make-type v1 ...)
+         (begin
+           (for i in (cdr struct)
+             (set! i (cons (cadr i) v1 ...)))
+           struct))
+       struct))))
+
+
+
+; (pos ((row 1) (col 2)))
