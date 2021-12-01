@@ -19,7 +19,7 @@ char *concat(char **s, int n) {
     }
 	memcpy(res + sarr_l(s, n), "\0", 1);
   return res;
-  }
+}
 
 int main (int argc, char **argv)
 {
