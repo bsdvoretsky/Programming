@@ -18,7 +18,7 @@ void bmall(char *a, char *b, int *stop_symbols, int *suffshift) {
 		while ((p >= 0) && (b[t + p] == a[p])) p--;
 		if (p == -1) {
 			printf("%d\n", t);
-			t += last + 1;
+			t++;
 		}
 		else {
 			t += max(suffshift[p + 1], p - stop_symbols[(int) b[t + p] - 97]);
