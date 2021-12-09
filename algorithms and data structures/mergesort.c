@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void print_arr(int *a, size_t n) {
+void print_arr(size_t n, int a[n]) {
 	for (size_t i = 0; i < n; ++i) {
 		if (i == n - 1) {
 			printf("%d\n", a[i]);
@@ -12,77 +12,52 @@ void print_arr(int *a, size_t n) {
 	}
 }
 
-int *insert_abs_sort(int *a, int b, int e) {
-	int i = 1, loc, elem;
-	int *t = malloc((e - b + 1) * sizeof(int));
-	for (int j = b; j <= e; j++) {
-		t[j - b] = a[j];
-	}
-	while (i < (e - b + 1)) {
-		loc = i - 1;
-		elem = t[i];
-		while (loc >= 0 && abs(elem) < abs(t[loc])) {
-			t[loc + 1] = t[loc];
-			loc--;
+void insertsort(int n, int a[n]) {
+	int lock, elem;
+	for (int i = 1; i < n; ++i) {
+		lock = i - 1;
+		elem = a[i];
+		while (lock >= 0 && (abs(elem) < abs(a[lock]))) {
+			a[lock + 1] = a[lock];
+			lock--;
 		}
-		t[loc + 1] = elem;
-		i++;
+		a[lock + 1] = elem;
 	}
-	return t;
 }
 
-int *merge_abs_sort(int *up, int *down, int b, int e, int fl) {
-	int m;
-	int *c, *d, *t;
-	if ((e - b + 1) < 5 && fl) {
-		return	insert_abs_sort(up, b, e);
-	}
+void mergesort(int n, int a[n]) {
+	if (n < 5) insertsort(n, a);
 	else {
-		if (e == b) {
-			down[e] = up[e];
-			return down;
+		mergesort((n + 1) / 2, a);
+		mergesort(n / 2, a + (n + 1) / 2);
+		int b[n], l = 0, r = (n + 1) / 2;
+		int i = 0;
+		while ((l < (n + 1) / 2) || (r < n)) {
+			if ((l < (n + 1) / 2) && (r < n)) {
+				if (abs(a[l]) >= abs(a[r])) {
+					b[i] = a[r];
+					r++;
+				}
+				else {
+					b[i] = a[l];
+					l++;
+				}
+			}
+			else if ((l < (n + 1) / 2)) {
+				b[i] = a[l];
+				l++;
+			}
+			else {
+				b[i] = a[r];
+				r++;
+			}
+			i++;
 		}
-		m = (e + b) / 2;
-		c = merge_abs_sort(up, down, b, m, 0);
-		d = merge_abs_sort(up, down, m + 1, e, 0);
-
-		t = c == up ? down : up;
-
-	    int b_cur = b, e_cur = m + 1;
-	    for (int i = b; i <= e; i++)
-	    {
-	        if (b_cur <= m && e_cur <= e)
-	        {
-	            if (abs(c[b_cur]) < abs(d[e_cur]))
-	            {
-	                t[i] = c[b_cur];
-	                b_cur++;
-	            }
-	            else
-	            {
-	                t[i] = d[e_cur];
-	                e_cur++;
-	            }
-	        }
-	        else if (b_cur <= m)
-	        {
-	            t[i] = c[b_cur];
-	            b_cur++;
-	        }
-	        else
-	        {
-	            t[i] = d[e_cur];
-	            e_cur++;
-	        }
-	    }
-	    return t;
+		for (int k = 0; k < n; ++k) {
+			a[k] = b[k];
+		}
 	}
-
-	
 }
-
-
-
 
 int main(int argc, char **argv)
 {
@@ -93,9 +68,7 @@ int main(int argc, char **argv)
 	for (int i = 0; i < n; i++) {
 		scanf("%d", &a[i]);
 	}
-
-	int *b = malloc(n * sizeof(int));
-	b = merge_abs_sort(a, b, 0, n - 1, 1);
-	print_arr(b, n);
+	mergesort(n, a);
+	print_arr(n, a);
 	return 0;
 }
