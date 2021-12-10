@@ -1,60 +1,54 @@
 #include <stdio.h>
 
-void selection_sort(int *a, int n) {
-	int m = a[0];
-	int c = 0, t;
-	for (int i = 0; i < n; ++i) {
-		if (a[i] < m) {
-			m = a[i];
-			c = i;
+void selection_sort(int *a, int l, int r) {
+	int m, x;
+	for (int i = l; i < r - 1; ++i) {
+		m = a[i];
+		x = i;
+		for (int j = i + 1; j <= r; ++j) {
+			if (a[j] < m) {
+				m = a[j];
+				x = j;
+			}
 		}
+		a[x] = a[i];
+		a[i] = m;
 	}
-	t = a[0];
-	a[0] = m;
-	a[c] = t;
-	if (n > 1)
-		selection_sort(a + 1, n - 1);
 }
 
-void quicksort(int *a, int n, int m) {
-	if (n < m) {
-		selection_sort(a, n);
+void quicksort(int *a, int m, int l, int r) {
+	if ((r - l + 1) < m) {
+		selection_sort(a, l, r);
 	}
 	else {
-		if (n == 2) {
-			if (a[0] > a[1]) {
-				int t = a[0];
-				a[0] = a[1];
-				a[1] = t;
+		int mid = a[(l + r) / 2];
+		int i = l;
+		int j = r;
+		int t;
+		while (i <= j) {
+			while (a[i] < mid) {
+				i++;
+			}
+			while (a[j] > mid) {
+				j--;
+			}
+			if (i <= j) {
+				t = a[i];
+				a[i] = a[j];
+				a[j] = t;
+				i++;
+				j--;
 			}
 		}
-		else if (n > 2) {
-			int mid = n / 2;
-			int b[n];
-			int k = 0, p;
-			for (int i = 0; i < n; ++i) {
-				if (a[i] < a[mid]) {
-					b[k] = a[i];
-					k++;
-				}
-			}
-			p = k;
-			b[k] = a[mid];
-			k++;
-			for (int i = 0; i < n; ++i) {
-				if (a[i] > a[mid]) {
-					b[k] = a[i];
-					k++;
-				}
-			}
-			for (int i = 0; i < n; i++) {
-				a[i] = b[i];
-			}
-			quicksort(a, p, m);
-			quicksort(a + p + 1, n - p - 1, m);
+		if (r > i) {
+			quicksort(a, m, i, r);
 		}
+		if (l < j) {
+			quicksort(a, m, l, j);
+		} 
 	}
 }
+
 
 int main(int argc, char **argv)
 {
@@ -64,7 +58,7 @@ int main(int argc, char **argv)
 	for (int i = 0; i < n; ++i) {
 		scanf("%d", &a[i]);
 	}
-	quicksort(a, n, m);
+	quicksort(a, m, 0, n - 1);
 	
 	for (int i = 0; i < n; ++i) {
 		printf("%d ", a[i]);
