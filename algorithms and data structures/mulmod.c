@@ -1,27 +1,24 @@
 #include <stdio.h>
 
-long long int modulo (long long int a, int bb[64], long long int m, int i) {
-    if (i == 0) {
+unsigned long long modulo (long int a, int bb[64], long int m, int i) {
+    if (i == 63) {
         return a * bb[i];
     }
-    else {
-        return (((2 * (modulo(a, bb, m, i - 1) % m)) % m) + ((a * bb[i]) % m)) % m;
-    }
+    return ((modulo(a, bb, m, i + 1) * 2) % m + (a * bb[i]) % m) % m;
 }
 
 int main(int argc, char **argv)
 {
-    long long int a, b, m;
-    scanf("%lld %lld %lld", &a, &b, &m);
+    unsigned long long a, b, m;
+    scanf("%llu %llu %llu", &a, &b, &m);
     int bb[64];
-    long long int i = b;
-    int j = 63;
-    while (j >= 0)
+    int j = 0;
+    while (j < 64)
     {
-        bb[j] = i % 2;
-        i /= 2;
-        j--;
+        bb[j] = b % 2;
+        b /= 2;
+        j++;
     }
-    printf("%lld\n", modulo(a, bb, m, 63));
+    printf("%llu\n", modulo(a, bb, m, 0));
     return 0;
-}
+} 
