@@ -11,15 +11,20 @@ int main(int argc, char **argv)
     int k;
     scanf("%d", &k);
     int msum = 0;
-    int* b = a;
+    int temp = 0;
+    int p = 0;
     for (int i = 0; i < k; i++) {
-        msum += a[i];
+        temp += a[i];
     }
     for (int i = k; i < n; i++) {
-        if ((a[k] - *b) > 0) {
-            msum += (a[i] - *b);
+        if (temp > msum) {
+            msum = temp;
         }
-        b++;
+        temp += (a[i] - a[p]);
+        p++;
+    }
+    if (temp > msum) {
+        msum = temp;
     }
     printf("%d\n", msum);
     return 0;
