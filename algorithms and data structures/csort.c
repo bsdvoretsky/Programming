@@ -4,10 +4,10 @@
 
 void csort(char *src, char *dest)
 {
-    char *a[256];
-    int a_n[256];
-    for (int i = 0; i < 256; ++i) {
-        a[i] = calloc(256, sizeof(char));
+    char *a[5000];
+    int a_n[5000];
+    for (int i = 0; i < 5000; ++i) {
+        a[i] = calloc(5000, sizeof(char));
         a_n[i] = 0;
     }
     int b = -1, e, fl = 0;
@@ -37,21 +37,21 @@ void csort(char *src, char *dest)
         a_n[e-b]++;
     }
 
-    for (int i = 0; i < 256; i++) {
+    for (int i = 0; i < 5000; i++) {
         if (a_n[i] != 0) {
             strcpy(dest + strlen(dest), a[i]);
             strcpy(dest + strlen(dest), " ");
         }
     }
-    for (int i = 0; i < 256; ++i) {
+    for (int i = 0; i < 5000; ++i) {
         free(a[i]);
     }
 }
 
 int main(int argc, char **argv)
 {
-    char *src = calloc(256, sizeof(char));
-    char *dest = calloc(256, sizeof(char));
+    char *src = calloc(5000, sizeof(char));
+    char *dest = calloc(5000, sizeof(char));
     gets(src);
     csort(src, dest);
     printf("%s", dest);
