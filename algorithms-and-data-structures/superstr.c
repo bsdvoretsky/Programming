@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 int max(int a, int b) {
@@ -81,13 +82,10 @@ int main (int argc, char **argv)
     int n;
     scanf("%d\n", &n);
     char *strs[n];
-    char line[4096];
-
     for (int i = 0; i < n; i++) {
-        gets(line);
-        strs[i] = strdup(line);
+        strs[i] = (char *) calloc (4096, sizeof(char));
+        gets(strs[i]);
     }
-
     printf("%d\n", superstr(strs, n));
     return 0;
 }

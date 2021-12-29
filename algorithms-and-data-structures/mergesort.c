@@ -34,7 +34,7 @@ void mergesort(int n, int a[n]) {
 		int i = 0;
 		while ((l < (n + 1) / 2) || (r < n)) {
 			if ((l < (n + 1) / 2) && (r < n)) {
-				if (abs(a[l]) >= abs(a[r])) {
+				if (abs(a[l]) > abs(a[r])) {
 					b[i] = a[r];
 					r++;
 				}
