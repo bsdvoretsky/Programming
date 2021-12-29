@@ -10,12 +10,12 @@ int main(int argc, char **argv)
     }
     int k;
     scanf("%d", &k);
-    int msum = 0;
     int temp = 0;
     int p = 0;
     for (int i = 0; i < k; i++) {
         temp += a[i];
     }
+    int msum = temp;
     for (int i = k; i < n; i++) {
         if (temp > msum) {
             msum = temp;

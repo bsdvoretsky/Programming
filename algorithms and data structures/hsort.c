@@ -93,11 +93,11 @@ int main(int argc, char **argv)
 {
 	int n;
 	scanf("%d", &n);
-	char a[n][256];
+	char a[n][5000];
 	for (int i = 0; i < n; ++i) {
 		scanf("%s", a[i]);
 	}
-	hsort(a, n, sizeof(char) * 256, compare);
+	hsort(a, n, sizeof(char) * 5000, compare);
 	for (int i = 0; i < n; ++i) {
 		printf("%s ", a[i]);
 	}
