@@ -83,10 +83,13 @@ int main (int argc, char **argv)
     scanf("%d\n", &n);
     char *strs[n];
     for (int i = 0; i < n; i++) {
-        strs[i] = (char *) calloc (4096, sizeof(char));
+        strs[i] = (char *) calloc (2048, sizeof(char));
         gets(strs[i]);
     }
     printf("%d\n", superstr(strs, n));
+    for (int i = 0; i < n; i++) {
+        free(strs[i]);
+    }
     return 0;
 }
 

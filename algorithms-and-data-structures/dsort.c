@@ -25,7 +25,7 @@ void dsort(char *src)
 
 int main (int argc, char **argv)
 {
-	char src[1000000];
+	char src[2000000];
 	gets(src);
 	dsort(src);
 	return 0;

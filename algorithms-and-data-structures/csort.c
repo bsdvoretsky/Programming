@@ -7,7 +7,7 @@ void csort(char *src, char *dest)
     char *a[5000];
     int a_n[5000];
     for (int i = 0; i < 5000; ++i) {
-        a[i] = (char *) calloc(5000, sizeof(char));
+        a[i] = (char *) calloc (5000, sizeof(char));
         a_n[i] = 0;
     }
     int b = -1, e, fl = 0;
@@ -20,7 +20,7 @@ void csort(char *src, char *dest)
             e = i;
             if (b >= 0 && fl == 1) {
                 if (a_n[e-b] > 0) {
-                    strcpy(a[e-b] + strlen(a[e-b]), " ");
+                    strcpy(a[e-b] + strlen(a[e-b]), ' \0');
                 }
                 strncpy(a[e-b] + strlen(a[e-b]), src + b, e-b);
                 a_n[e-b]++;
@@ -31,7 +31,7 @@ void csort(char *src, char *dest)
     e = strlen(src);
     if (b >= 0) {
         if (a_n[e-b] > 0) {
-            strcpy(a[e-b] + strlen(a[e-b]), " ");
+            strcpy(a[e-b] + strlen(a[e-b]), ' \0');
         }
         strncpy(a[e-b] + strlen(a[e-b]), src + b, e-b);
         a_n[e-b]++;
@@ -39,8 +39,9 @@ void csort(char *src, char *dest)
 
     for (int i = 0; i < 5000; i++) {
         if (a_n[i] != 0) {
+        	strcpy(a[i] + strlen(a[i]), '\0');
             strcpy(dest + strlen(dest), a[i]);
-            strcpy(dest + strlen(dest), " ");
+            strcpy(dest + strlen(dest), ' \0');
         }
     }
     for (int i = 0; i < 5000; ++i) {
@@ -50,8 +51,8 @@ void csort(char *src, char *dest)
 
 int main(int argc, char **argv)
 {
-    char *src = (char *) calloc(5000, sizeof(char));
-    char *dest = (char *) calloc(5000, sizeof(char));
+    char *src = (char *) calloc (5000, sizeof(char));
+    char *dest = (char *) calloc (5000, sizeof(char));
     gets(src);
     csort(src, dest);
     printf("%s", dest);
