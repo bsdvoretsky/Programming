@@ -4,58 +4,58 @@
 
 void csort(char *src, char *dest)
 {
-    char *a[5000];
-    int a_n[5000];
-    for (int i = 0; i < 5000; ++i) {
-        a[i] = (char *) calloc (5000, sizeof(char));
-        a_n[i] = 0;
+    int res[1024][1024];
+    int c_res[1024] = {0};
+    int i = 0, b, e, fl = 0, j;
+    for (i = 0; i < 1024; ++i) {
+        for (j = 0; j < 1024; j++) {
+            res[i][j] = -1;
+        }
     }
-    int b = -1, e, fl = 0;
-    for (int i = 0; i < strlen(src); ++i) {
+    i = 0;
+    j = 0;
+    int k = 0;
+    while (src[i] != '\0') {
         if (src[i] != ' ' && fl == 0) {
             b = i;
             fl = 1;
-        } 
-        else if (src[i] == ' ') {
+        }
+        else if (src[i] == ' ' && fl == 1) {
             e = i;
-            if (b >= 0 && fl == 1) {
-                if (a_n[e-b] > 0) {
-                    strcpy(a[e-b] + strlen(a[e-b]), ' \0');
+            fl = 0;
+            res[e - b][c_res[e - b]] = b;
+            c_res[e - b]++;
+        }
+        ++i;
+    }
+    if (fl == 1) {
+        e = i;
+        fl = 0;
+        res[e - b][c_res[e - b]] = b;
+        c_res[e - b]++;
+    }
+    for (i = 0; i < 1024; i++) {
+        for (j = 0; j < 1024; j++) {
+            if (res[i][j] != -1) {
+                for (int c = 0; c < i; ++c) {
+                    dest[k] = src[res[i][j] + c];
+                    k++;
                 }
-                strncpy(a[e-b] + strlen(a[e-b]), src + b, e-b);
-                a_n[e-b]++;
-                fl = 0;
+                dest[k] = ' ';
+                k++;
             }
         }
     }
-    e = strlen(src);
-    if (b >= 0) {
-        if (a_n[e-b] > 0) {
-            strcpy(a[e-b] + strlen(a[e-b]), ' \0');
-        }
-        strncpy(a[e-b] + strlen(a[e-b]), src + b, e-b);
-        a_n[e-b]++;
-    }
-
-    for (int i = 0; i < 5000; i++) {
-        if (a_n[i] != 0) {
-        	strcpy(a[i] + strlen(a[i]), '\0');
-            strcpy(dest + strlen(dest), a[i]);
-            strcpy(dest + strlen(dest), ' \0');
-        }
-    }
-    for (int i = 0; i < 5000; ++i) {
-        free(a[i]);
-    }
+    dest[k - 1] = '\0';
 }
 
-int main(int argc, char **argv)
+int main(int argc, char const *argv[])
 {
-    char *src = (char *) calloc (5000, sizeof(char));
-    char *dest = (char *) calloc (5000, sizeof(char));
+    char *src = (char *) calloc (1024, sizeof(char));
+    char *dest = (char *) calloc (1024, sizeof(char));
     gets(src);
     csort(src, dest);
-    printf("%s", dest);
+    puts(dest);
     free(src);
     free(dest);
     return 0;
