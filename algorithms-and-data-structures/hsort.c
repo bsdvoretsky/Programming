@@ -43,13 +43,13 @@ void hsort(void *base, size_t nel, size_t width,
 						for (int j = 0; j < width; j++) {
 							*((char *) child2 + j) = *((char *) base + 2 * (i + width) + j);
 						}
-						if (compare(child1, child2) != -1 && compare(root, child1) == -1) {
+						if (compare(child1, child2) >= 0 && compare(root, child1) < 0) {
 							for (int j = 0; j < width; j++) {
 								*((char *) base + i + j) = *((char *) child1 + j);
 								*((char *) base + 2 * i + width + j) = *((char *) root + j);
 							}
 						}
-						else if (compare(child2, child1) != -1 && compare(root, child2) == -1) {
+						else if (compare(child2, child1) >= 0 && compare(root, child2) < 0) {
 							for (int j = 0; j < width; j++) {
 								*((char *) base + i + j) = *((char *) child2 + j);
 								*((char *) base + 2 * i + 2 * width + j) = *((char *) root + j);
@@ -57,7 +57,7 @@ void hsort(void *base, size_t nel, size_t width,
 						}
 					}
 					else {
-						if (compare(root, child1) == -1) {
+						if (compare(root, child1) < 0) {
 							for (int j = 0; j < width; j++) {
 								*((char *) base + i + j) = *((char *) child1 + j);
 								*((char *) base + 2 * i + width + j) = *((char *) root + j);
@@ -79,7 +79,7 @@ void hsort(void *base, size_t nel, size_t width,
 	} 
 	else if (nel == 2) {
 		char temp;
-		if (compare((char *) base + width, base) == -1) {
+		if (compare((char *) base + width, base) < 0) {
 			for (int i = 0; i < width; ++i) {
 				temp = *((char *) base + i);
 				*((char *) base + i) = *((char *) base + width + i);
@@ -93,11 +93,11 @@ int main(int argc, char **argv)
 {
 	int n;
 	scanf("%d", &n);
-	char a[n][5000];
+	char a[n][1001];
 	for (int i = 0; i < n; ++i) {
 		scanf("%s", a[i]);
 	}
-	hsort(a, n, sizeof(char) * 5000, compare);
+	hsort(a, n, sizeof(char) * 1001, compare);
 	for (int i = 0; i < n; ++i) {
 		puts(a[i]);
 	}
