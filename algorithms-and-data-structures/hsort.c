@@ -25,11 +25,11 @@ int compare (const void *a, const void *b) {
 void hsort(void *base, size_t nel, size_t width,
         int (*compare)(const void *a, const void *b))
 {
-	if (nel != 1 && nel != 2) {
-		void *root, *child1, *child2;
-		root = (char *) calloc (1, width);
-		child1 = (char *) calloc (1, width);
-		child2 = (char *) calloc (1, width);
+	void *root, *child1, *child2;
+	root = (char *) calloc (width, sizeof(char));
+	child1 = (char *) calloc (width, sizeof(char));
+	child2 = (char *) calloc (width, sizeof(char));
+	while (nel != 1 && nel != 2) {
 		for (size_t k = 0; k < nel / 2 + 1; k++) {
 			for (size_t i = 0; i < nel * width / 2; i+=width) {
 				for (int j = 0; j < width; j++) {
@@ -72,12 +72,9 @@ void hsort(void *base, size_t nel, size_t width,
 			*((char *) base + j) = *((char *) base + (nel - 1) * width + j);
 			*((char *) base + (nel - 1) * width + j) = *((char *) root + j);
 		}
-		free(root);
-		free(child1);
-		free(child2);
-		hsort(base, nel - 1, width, compare);
+		nel--;
 	} 
-	else if (nel == 2) {
+	if (nel == 2) {
 		char temp;
 		if (compare((char *) base + width, base) < 0) {
 			for (int i = 0; i < width; ++i) {
@@ -87,17 +84,20 @@ void hsort(void *base, size_t nel, size_t width,
 			}
 		}
 	}
+	free(root);
+	free(child1);
+	free(child2);
 }
 
 int main(int argc, char **argv)
 {
 	int n;
 	scanf("%d", &n);
-	char a[n][1001];
+	char a[n][103];
 	for (int i = 0; i < n; ++i) {
 		scanf("%s", a[i]);
 	}
-	hsort(a, n, sizeof(char) * 1001, compare);
+	hsort(a, n, sizeof(char) * 103, compare);
 	for (int i = 0; i < n; ++i) {
 		puts(a[i]);
 	}
