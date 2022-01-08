@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <strings.h>
+#include <string.h>
 #include <stdlib.h>
 
 struct Queue {
@@ -48,11 +48,11 @@ int main(int argc, char const *argv[])
 	for (int i = 0; i < n; ++i) {
 		scanf("%s", op);
 		if (strcmp(op, "ENQ") == 0) {
-			scanf("%ld", &d);
+			scanf("%lld", &d);
 			Enqueue(&queue, d);
 		}
 		else if (strcmp(op, "DEQ") == 0) {
-			printf("%ld\n", Dequeue(&queue));
+			printf("%lld\n", Dequeue(&queue));
 		}
 		else if (strcmp(op, "EMPTY") == 0) {
 			if (QueueEmpty(&queue)) printf("true\n");

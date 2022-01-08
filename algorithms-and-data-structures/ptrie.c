@@ -148,5 +148,8 @@ int main(int argc, char const *argv[])
 			printf("%d\n", Prefix(root, k));
 		}
 	}
+
+    free(k);
+    free(root);
 	return 0;
 }

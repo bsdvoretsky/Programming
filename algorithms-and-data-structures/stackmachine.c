@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <strings.h>
+#include <string.h>
 #include <stdlib.h>
 #define STACK_MAX_SIZE 100000
 
@@ -92,15 +92,16 @@ void swap(struct Stack *stack) {
 
 int main(int argc, char const *argv[])
 {
-	int n, t;
+	int n;
+	long long t;
 	scanf("%d", &n);
 	struct Stack stack;
 	init(&stack);
 	char op[100];
 	for (int i = 0; i < n; ++i) {
-		scanf("%s", &op);
+		scanf("%s", op);
 		if (strcmp(op, "CONST") == 0) {
-			scanf("%ld", &t);
+			scanf("%lld", &t);
 			push(&stack, t);
 		}
 		else if (strcmp(op, "ADD") == 0) {
@@ -131,6 +132,6 @@ int main(int argc, char const *argv[])
 			swap(&stack);
 		}
 	}
-	printf("%ld", getup(&stack));
+	printf("%lld", getup(&stack));
 	return 0;
 }
