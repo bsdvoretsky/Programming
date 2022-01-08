@@ -139,6 +139,9 @@ int main(int argc, char const *argv[])
 		scanf("%s", op);
 		scanf("%s", k);
 		if (!strcmp(op, "INSERT")) {
+            if (root == NULL) {
+                root = getNewTrieNode();
+            }
 			Insert(root, k);
 		}
 		else if (!strcmp(op, "DELETE")) {
