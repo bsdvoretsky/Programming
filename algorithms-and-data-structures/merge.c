@@ -7,164 +7,78 @@ struct Pair
 	int value;
 };
 
-struct Queue
+struct PQ
 {
 	struct Pair **heap;
 	int cap;
 	int count;
-} q;
+};
 
-
-void Heapify(int i, int n)
-{
-	int left, right, j;
-	struct Pair* swapper;
-	for(;;)
-	{
-		left = 2 * i + 1;
-		right = left + 1;
-		j = i;
-
-		if (left < n && q.heap[i]->value < q.heap[left]->value)
-			i = left;
-		if (right < n && q.heap[i]->value < q.heap[right]->value)
-			i = right;
-		if (i == j)
-			break;
-
-		swapper = q.heap[i];
-		q.heap[i] = q.heap[j];
-		q.heap[j] = swapper;
-
-		q.heap[i]->index = i;
-		q.heap[j]->index = j;
-	}
+void InitPQ(struct PQ *pq, int k) {
+	pq->heap = (struct Pair **) malloc(k * sizeof(struct Pair *));
+	pq->cap = k;
+	pq->count = 0;
 }
 
-void InitPriorityQueue(int k)
-{
-	q.heap = (struct Pair **) malloc (k * sizeof(struct Pair));
-	q.cap = k;
-	q.count = 0;
-}
-
-struct Pair* Minimum()
-{
-	if (q.count == 0)
-	{
-		printf("error: queue is empty\n");
-		exit(1);
-	}
-
-	return q.heap[0];
-}
-
-int QueueEmpty()
-{
-	return (q.count == 0);
-}
-
-void Insert(struct Pair *ptr)
-{
-	int i = q.count;
-
-	if (i == q.cap)
-	{
-		printf("error: overflow\n");
-		exit(1);
-	}
-
-	q.count = i + 1;
-	q.heap[i] = ptr;
+void Insert(struct PQ *pq, struct Pair *ptr) {
+	int i = pq->count;
+	pq->count = i + 1;
+	pq->heap[i] = ptr;
 	struct Pair *swapper;
-	while (i > 0 && q.heap[ (i - 1) / 2 ]->value < q.heap[i]->value)
-	{
-		swapper = q.heap[ (i - 1) / 2 ];
-		q.heap[ (i - 1) / 2 ] = q.heap[i];
-		q.heap[i] = swapper;
 
-		q.heap[i]->index = i;
+	while (i > 0 && (pq->heap[(i - 1) / 2]->value > pq->heap[i]->value)) {
+		swapper = pq->heap[(i - 1) / 2];
+		pq->heap[(i - 1) / 2] = pq->heap[i];
+		pq->heap[i] = swapper;
+
+		pq->heap[i]->index = i;
 		i = (i - 1) / 2;
 	}
-
-	q.heap[i]->index = i;
+	pq->heap[i]->index = i;
 }
 
-struct Pair* ExtractMin()
-{
-	if (q.count == 0)
-	{
-		printf("error: queue is empty\n");
-		exit(1);
-	}
+void Heapify(int i, int k, struct Pair **heap) {
+	int l, r, j;
+	struct Pair *swapper;
 
-	struct Pair *ptr = q.heap[0];
-	--(q.count);
+	for (;;) {
+		l = 2 * i + 1;
+		r = l + 1;
+		j = i;
 
-	if (q.count > 0)
-	{
-		q.heap[0] = q.heap[q.count];
-		q.heap[0]->index = 0;
-		Heapify(0, q.count);
-	}
+		if (l < n && heap[i]->value > heap[l]->value)
+			i = l;
+		if (r < n && heap[i]->value > heap[r]->value)
+			i = r;
+		if (i == j) 
+			break;
 
-	return ptr;
-}
+		swapper = heap[i];
+		heap[i] = heap[j];
+		heap[j] = swapper;
 
-void QueueProcess(int *sizes, int **arrs)
-{
-	int i = 0, count = 0;
-	struct Pair* element;
-
-	for (i = 0; i < q.cap; i++)
-	{
-		element->value = arrs[i][0];
-		element->index = i;
-		Insert(element);
-		count += sizes[i];
-	}
-
-	for (i = 0; i < count; i++)
-	{
-		printf("%d ", ExtractMin());
-
-		sizes[element->index]--;
-		if (sizes[element->index])
-		{
-			++arrs[element->index];
-			element->value = *arrs[element->index];
-			Insert(element);
-		}
+		heap[i]->index = i;
+		heap[j]->index = j;
 	}
 }
 
-/*void IncreaseKey(Pair ptr, int newKey)
-{
-	int i;
-	i = ptr.index;
+struct Pair* ExtractMin(struct PQ *pq) {
+	struct Pair *ptr = pq->heap[0];
+	--(pq->count);
 
-	ptr.key = newKey;
-
-	while(i > 0 && q.heap[ (i - 1) / 2 ].key < newKey)
-	{
-		Swap(q.heap[ (i - 1) / 2 ], q.heap[i]);  //  !
-		q.heap[i].index = i;
-		i = (i - 1) / 2;		
+	if (pq->count > 0) {
+		pq->heap[0] = pq->heap[pq->count];
+		pq->heap[0]->index = 0;
+		Heapify(0, pq->count, pq->heap);
 	}
-
-	ptr.index = i;
-}*/
+}
 
 int main(int argc, char const *argv[])
 {
-	int i = 0, j = 0;
-
-	int k;
-	scanf("%d", &k);
-
+	int i = 0, j = 0, k, sum = 0;
 	int sizes[k];
 
-	int sum = 0;
+	scanf("%d", &k);
 
 	for (i = 0; i < k; ++i)
 	{
@@ -173,7 +87,6 @@ int main(int argc, char const *argv[])
 	}
 
 	int **arrs = (int **) malloc (k * sizeof(int *) + sum * sizeof(int));
-
 	for (i = 0; i < k; i++)
 	{
 		if (i == 0)
@@ -182,13 +95,39 @@ int main(int argc, char const *argv[])
 			arrs[i] = (int *)(arrs[i - 1] + sizes[i - 1]);
 
 		for (j = 0; j < sizes[i]; j++)
-			scanf("%d", arrs[i] + j);
+			scanf("%li", arrs[i] + j);
 	}
 
-	InitPriorityQueue(k);
-	QueueProcess(sizes, arrs);
+	struct PQ pq;
+	InitPQ(&pq, k);
 
-	free(arrs);
-	free(q.heap);
+	int count = 0;
+	struct Pair *temp;
+
+	for (i = 0; i < k; ++i) {
+		temp = (struct Pair *) malloc (sizeof(struct Pair));
+		temp->value = arrs[i][0];
+		temp->index = i;
+		Insert(&pq, temp);
+		count += sizes[i];
+	}
+
+	struct Pair *elem;
+
+	for (i = 0; i < count; i++)
+	{
+		elem = (struct Pair *) malloc (sizeof(struct Pair));
+		elem = ExtractMin(&pq);
+		printf("%d ", element->value);
+
+		--sizes[element->index];
+		if (sizes[element->index])
+		{
+			++arrs[element.arr_num];
+			element->value = arrs[element->index];
+			QueueInsert(element);
+		}
+	}
+
 	return 0;
 }
