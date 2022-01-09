@@ -9,7 +9,9 @@ void dsort(char *src)
 		alphabet[i] = 0;
 	}
 
-	for (long i = 0; i < strlen(src); i++) {
+	size_t length = strlen(src);
+
+	for (long i = 0; i < length; i++) {
 		++alphabet[((int) src[i]) - 97];
 	}
 
@@ -25,7 +27,7 @@ void dsort(char *src)
 
 int main (int argc, char **argv)
 {
-	char src[1000000];
+	char src[2000000];
 	gets(src);
 	dsort(src);
 	return 0;
