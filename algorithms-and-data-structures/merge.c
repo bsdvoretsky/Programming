@@ -62,8 +62,8 @@ void Heapify(int i, int k, struct Pair **heap) {
 	}
 }
 
-struct Pair* ExtractMin(struct PQ *pq) {
-	struct Pair *ptr = pq->heap[0];
+void ExtractMin(struct PQ *pq, struct Pair *element) {
+	element = pq->heap[0];
 	--(pq->count);
 
 	if (pq->count > 0) {
@@ -76,9 +76,9 @@ struct Pair* ExtractMin(struct PQ *pq) {
 int main(int argc, char const *argv[])
 {
 	int i = 0, j = 0, k, sum = 0;
-	int sizes[k];
 
 	scanf("%d", &k);
+	int sizes[k];
 
 	for (i = 0; i < k; ++i)
 	{
@@ -92,7 +92,7 @@ int main(int argc, char const *argv[])
 		arrs[i] = malloc(sizes[i] * sizeof(int));
 
 		for (j = 0; j < sizes[i]; j++)
-			scanf("%d", arrs[i][j]);
+			scanf("%d", &arrs[i][j]);
 	}
 
 	struct PQ pq;
@@ -113,18 +113,24 @@ int main(int argc, char const *argv[])
 
 	for (i = 0; i < count; i++)
 	{
-		element = (struct Pair *) malloc (sizeof(struct Pair));
-		element = ExtractMin(&pq);
+		element = malloc (sizeof(struct Pair));
+		ExtractMin(&pq, element);
 		printf("%d ", element->value);
 
 		--sizes[element->index];
 		if (sizes[element->index])
 		{
 			++arrs[element->index];
-			element->value = arrs[element->index][0];
+			element->value = *arrs[element->index];
 			Insert(&pq, element);
 		}
 	}
 
+	free(element);
+	free(pq.heap);
+	free(temp);
+	for (i = 0; i < k; ++i) {
+		free(arrs[i]);
+	}
 	return 0;
 }
