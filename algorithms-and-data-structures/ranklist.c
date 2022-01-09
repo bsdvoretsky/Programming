@@ -5,10 +5,6 @@
 #define VALUE_LEN 10
 #define even(v) !(v & 1)
 
-int even(int n) {
-	return n % 2 == 0;
-}
-
 typedef struct Elem
 {
 	int k;
@@ -43,6 +39,11 @@ t_list ListInit(int n)
 	l->head = ElemInit(l);
 
 	return l;
+}
+
+int Create(int n) {
+	int b = calloc(n, sizeof(n));
+	return b;
 }
 
 int Compare(int a, int b)

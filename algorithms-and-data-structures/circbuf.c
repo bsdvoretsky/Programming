@@ -59,5 +59,6 @@ int main(int argc, char const *argv[])
 			else printf("false\n");
 		}
 	}
+	free(queue.elems);
 	return 0;
 }
