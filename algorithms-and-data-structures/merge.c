@@ -9,46 +9,43 @@ struct Pair
 
 struct PQ
 {
-	struct Pair **heap;
+	struct Pair *heap;
 	int cap;
 	int count;
 };
 
 void InitPQ(struct PQ *pq, int k) {
-	pq->heap = (struct Pair **) malloc(k * sizeof(struct Pair *));
+	pq->heap = malloc(k * sizeof(struct Pair));
 	pq->cap = k;
 	pq->count = 0;
 }
 
-void Insert(struct PQ *pq, struct Pair *ptr) {
+void Insert(struct PQ *pq, struct Pair ptr) {
 	int i = pq->count;
 	pq->count = i + 1;
 	pq->heap[i] = ptr;
-	struct Pair *swapper;
+	struct Pair swapper;
 
-	while (i > 0 && (pq->heap[(i - 1) / 2]->value > pq->heap[i]->value)) {
+	while (i > 0 && (pq->heap[(i - 1) / 2].value > pq->heap[i].value)) {
 		swapper = pq->heap[(i - 1) / 2];
 		pq->heap[(i - 1) / 2] = pq->heap[i];
 		pq->heap[i] = swapper;
-
-		pq->heap[i]->index = i;
 		i = (i - 1) / 2;
 	}
-	pq->heap[i]->index = i;
 }
 
-void Heapify(int i, int k, struct Pair **heap) {
+void Heapify(int i, int k, struct Pair *heap) {
 	int l, r, j;
-	struct Pair *swapper;
+	struct Pair swapper;
 
 	for (;;) {
 		l = 2 * i + 1;
 		r = l + 1;
 		j = i;
 
-		if (l < k && heap[i]->value > heap[l]->value)
+		if (l < k && heap[i].value > heap[l].value)
 			i = l;
-		if (r < k && heap[i]->value > heap[r]->value)
+		if (r < k && heap[i].value > heap[r].value)
 			i = r;
 		if (i == j) 
 			break;
@@ -56,21 +53,19 @@ void Heapify(int i, int k, struct Pair **heap) {
 		swapper = heap[i];
 		heap[i] = heap[j];
 		heap[j] = swapper;
-
-		heap[i]->index = i;
-		heap[j]->index = j;
 	}
 }
 
-void ExtractMin(struct PQ *pq, struct Pair *element) {
+struct Pair ExtractMin(struct PQ *pq, struct Pair element) {
 	element = pq->heap[0];
 	--(pq->count);
 
 	if (pq->count > 0) {
 		pq->heap[0] = pq->heap[pq->count];
-		pq->heap[0]->index = 0;
 		Heapify(0, pq->count, pq->heap);
 	}
+
+	return element;
 }
 
 int main(int argc, char const *argv[])
@@ -86,51 +81,49 @@ int main(int argc, char const *argv[])
 		sum += sizes[i];
 	}
 
-	int *arrs[k];
+	int **arrs = malloc(k * sizeof(int *) + sum * sizeof(int));
 	for (i = 0; i < k; i++)
 	{
-		arrs[i] = malloc(sizes[i] * sizeof(int));
+		if (i == 0)
+			arrs[i] = (int *)(arrs + k);
+		else
+			arrs[i] = (int *)(arrs[i - 1] + sizes[i - 1]);
 
 		for (j = 0; j < sizes[i]; j++)
-			scanf("%d", &arrs[i][j]);
+			scanf("%d", arrs[i] + j);
 	}
 
 	struct PQ pq;
 	InitPQ(&pq, k);
 
 	int count = 0;
-	struct Pair *temp;
+	struct Pair temp;
 
 	for (i = 0; i < k; ++i) {
-		temp = (struct Pair *) malloc (sizeof(struct Pair));
-		temp->value = arrs[i][0];
-		temp->index = i;
+		temp.value = arrs[i][0];
+		temp.index = i;
 		Insert(&pq, temp);
 		count += sizes[i];
 	}
 
-	struct Pair *element;
+	struct Pair element;
 
 	for (i = 0; i < count; i++)
 	{
-		element = malloc (sizeof(struct Pair));
-		ExtractMin(&pq, element);
-		printf("%d ", element->value);
+		element = ExtractMin(&pq, element);
+		printf("%d\n", element.value);
 
-		--sizes[element->index];
-		if (sizes[element->index])
+		--sizes[element.index];
+		if (sizes[element.index])
 		{
-			++arrs[element->index];
-			element->value = *arrs[element->index];
+			++arrs[element.index];
+			element.value = *arrs[element.index];
 			Insert(&pq, element);
 		}
 	}
 
-	free(element);
+	free(arrs);
 	free(pq.heap);
-	free(temp);
-	for (i = 0; i < k; ++i) {
-		free(arrs[i]);
-	}
+
 	return 0;
 }
