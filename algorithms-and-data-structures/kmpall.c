@@ -2,31 +2,38 @@
 #include <stdlib.h>
 #include <string.h>
 
-size_t prefix(char *str, size_t i, size_t k, size_t *prefix_arr) {
-	if (str[i] == str[k]) return k + 1;
-	if (k == 0) return 0;
-	prefix(str, i, prefix_arr[k - 1], prefix_arr);
-}
-
-void entry(char *a, size_t l) {
-	size_t prefix_arr[strlen(a)];
-	prefix_arr[0] = 0;
-	for (size_t i = 1; i < strlen(a); ++i) {
-		prefix_arr[i] = prefix(a, i, prefix_arr[i - 1], prefix_arr);
-		if (i > l && prefix_arr[i] == l) printf("%lu\n", i - 2 * l);
+void prefix(int *arr, char *S) {
+	int q = 0;
+	arr[0] = q;
+	int j = 1, l = strlen(S);
+	while (j < l) {
+		while (q > 0 && S[q] != S[j])
+			q = arr[q - 1];
+		if (S[q] == S[j])
+			++q;
+		arr[j] = q;
+		++j;
 	}
 }
 
+int kmpsubst (int *arr, char *S, char *T) {
+	int t = 0;
+	int h = 0, lt = strlen(T), ls = strlen(S);
+	while (h < lt) {
+		while (t > 0 && S[t] != T[h])
+			t = arr[t - 1];
+		if (S[t] == T[h])
+			++t;
+		if (t == ls)
+			printf("%d\n", h - ls + 1);
+		++h;
+	}
+}
 
-int main (int argc, char **argv)
+int main(int argc, char const *argv[])
 {
-	char *s = argv[1], *t = argv[2];
-	char *a = (char *) malloc (strlen(s) + strlen(t) + 2);
-	strcpy(a, s);
-	strcpy(a + strlen(s), "#");
-	strcpy(a + strlen(s) + 1, t);
-	strcpy(a + strlen(s) + 1 + strlen(t), "\0");
-	entry(a, strlen(s));
-	free(a);
+	int *arr = malloc (strlen(argv[1]) * sizeof(int));
+	prefix(arr, argv[1]);
+	kmpsubst(arr, argv[1], argv[2]);
 	return 0;
 }
