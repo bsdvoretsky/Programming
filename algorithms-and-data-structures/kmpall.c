@@ -35,5 +35,6 @@ int main(int argc, char const *argv[])
 	int *arr = malloc (strlen(argv[1]) * sizeof(int));
 	prefix(arr, argv[1]);
 	kmpsubst(arr, argv[1], argv[2]);
+	free(arr);
 	return 0;
 }
