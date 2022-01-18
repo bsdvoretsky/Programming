@@ -1,82 +1,77 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define alloc_elem (t_elem*)malloc(sizeof(t_elem))
 
-typedef struct Elem
+struct Elem
 {
 	struct Elem *prev, *next;
 	int v;
-} t_elem;
+};
 
-void Insert(t_elem *first, t_elem *second)
+void Insert(struct Elem *x, struct Elem *y)
 {
-	t_elem *third;
-	third = first->next;
-	first->next = second;
-	second->prev = first;
-	second->next = third;
-	third->prev = second;
+	struct Elem *z;
+	z = x->next;
+	x->next = y;
+	y->prev = x;
+	y->next = z;
+	z->prev = y;
 }
 
-void Delete(t_elem *first)
+void Delete(struct Elem *x)
 {
-	t_elem *second, *third;
-	second = first->prev;
-	third = first->next;
-	second->next = third;
-	third->prev = second;
-	first->prev = first->next = NULL;
+	struct Elem *y, *z;
+	y = x->prev;
+	z = x->next;
+	y->next = z;
+	z->prev = y;
+	x->prev = x->next = NULL;
 }
 
-void even(int n) {
-	return n % 2;
-}
-
-void InsertionSort(t_elem *head)
+void InSort(struct Elem *t)
 {
-	t_elem *i, *location;
-	i = head->next;
+	struct Elem *j, *loc;
+	j = t->next;
 
-	while (i != head)
+	while (j != t)
 	{
-		location = i->prev;
+		loc = j->prev;
 
-		while ((location != head) && (location->v > i->v))
-			location = location->prev;
+		while ((loc != t) && (loc->v > j->v))
+			loc = loc->prev;
 
-		Delete(i);
-		Insert(location, i);
-		i = i->next;
+		Delete(j);
+		Insert(loc, j);
+		j = j->next;
 	}
 }
 
 int main()
 {
-	int n = 0, i = 0;
+	int n = 0, j = 0;
 	scanf("%d", &n);
 
-	t_elem *head, *e, *f;
+	struct Elem *t, *p, *g;
 
-	head = alloc_elem;
-	head->next = head->prev = head;
+	t = (struct Elem *) malloc (sizeof(struct Elem));
+	t->next = t->prev = t;
 
-	for (i = 0; i < n; i++)
+	for (j = 0; j < n; j++)
 	{
-		e = alloc_elem;
-		scanf("%d", &(e->v));
-		Insert(head, e);
+		p = (struct Elem *) malloc (sizeof(struct Elem));
+		scanf("%d", &((*p).v));
+		Insert(t, p);
 	}
 
-	InsertionSort(head);
+	InSort(t);
 
-	e = head->next;
-	while (e != head)
+	p = t->next;
+	while (p != t)
 	{
-		printf("%d ", e->v);
-		f = e;
-		e = e->next;
-		free(f);
+		printf("%d ", p->v);
+		g = p;
+		p = p->next;
+		free(g);
 	}
-	free(e);
+	free(p);
 	return 0;
 }

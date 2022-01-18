@@ -1,9 +1,10 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <math.h>
 
 int query(int *T, int c, int l, int r, int a, int b) {
-  if ((l == a && r == b) || l == r)
+  if (l == a && r == b)
     return T[c];
   else {
     int m = (a + b) / 2;
@@ -52,7 +53,7 @@ int main(int argc, char const *argv[])
 	for (i = 0; i < n; ++i) {
 		scanf("%d", &v[i]);
 	}
-	int T[4 * n];
+	int *T = calloc (4 * n, sizeof(int));
 	build(v, 0, 0, n - 1, T);
 	char op[4];
 	int j, l, r, m, val;
@@ -68,5 +69,6 @@ int main(int argc, char const *argv[])
 			update(j, val, 0, n - 1, 0, T);
 		}
 	}
+  free(T);
 	return 0;
 }
