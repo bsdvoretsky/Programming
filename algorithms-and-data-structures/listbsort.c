@@ -1,107 +1,112 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#define STR_LEN 1000
 
-typedef struct Elem
-{
-	struct Elem *next;
-	char *word;
-} t_elem;
+#define BSIZE 10003
 
-int Compare(t_elem *el)
-{
-	if (strlen(el->word) == strlen(el->next->word))
-		return 0;
+struct Elem {
+    struct Elem *following;
+    char *w;
+};
 
-	return (strlen(el->word) > strlen(el->next->word)) ? 1 : -1;
+void swap(char **a, char **b) {
+	char *t = *a;
+	*a = *b;
+	*b = t;
 }
 
-void Swap(t_elem *first)
-{
-	t_elem *second = first->next;
-	char *tmp = first->word;
-	first->word = second->word;
-	second->word = tmp;
+size_t compare(char *a, char *b) {
+	return (strlen(a) > strlen(b));
 }
 
 struct Elem *bsort(struct Elem *list)
 {
-	t_elem *i, *n = list->next;
-	int swap = 0;
+	if (list == NULL || (*list).following == NULL)
+		return list;
 
-	while (n->next != NULL)
-		n = n->next;
+    int fl = 1;
 
-	do
-	{
-		swap = 0;
+    struct Elem *c, *n;
 
-		for (i = list->next; i != n; i = i->next)
-			if (Compare(i) == 1)
-			{
-				Swap(i);
-				swap = 1;
-			}
+    while (fl == 1)
+    {
+    	fl = 0;
 
-		n = i;
-	} while (swap == 1);
+    	c = list;
+    	n = (*list).following;
 
-	return list;
+    	while (n != NULL)
+    	{
+    		if (compare((*c).w, (*n).w))
+    		{
+    			fl = 1;
+    			swap(&((*c).w), &((*n).w));
+    		}
+
+    		c = (*c).following;
+    		n = (*n).following;
+
+    	}
+    }
+
+    return list;
 }
 
-t_elem* ElemInit(char *w)
+struct Elem *ActiveElem(char **w)
 {
-	int len = strlen(w);
+	size_t len = strlen(*w);
 
-	if (len && w[len - 1] == '\n')
-		w[--len] = '\0';
+	if (len && (*w)[len - 1] == '\n')
+		(*w)[--len] = '\0';
 
-	t_elem *el;
-	el = (t_elem*)malloc(sizeof(t_elem));
-	el->next = NULL;
-	el->word = (char*)calloc(len + 1, sizeof(char));
-	strcpy(el->word, w);
+	struct Elem *e = (struct Elem *) malloc (sizeof(struct Elem));
+	(*e).following = NULL;
+	(*e).w = *w;
 
-	return el;
-}
+	return e;
+} 
 
 int main()
 {
-	char src[STR_LEN] = { 0 };
-	fgets(src, STR_LEN - 1, stdin);
+	char *src = (char *) malloc (BSIZE * sizeof(char));
+	char *fsrc = src;
 
-	t_elem *head, *el1, *el2;
-	head = el1 = el2 = NULL;
-	head = ElemInit("");
-	el1 = head;
+	fgets(src, BSIZE, stdin);
 
-	char sep[2] = { ' ' };
-	char *istr = strtok(src, sep);
-	while (istr != NULL)
+	struct Elem *l, *c, *n;
+	l = c = n = NULL;
+
+	char *idler = " ";
+	char *w = strtok(src, idler);
+
+	l = ActiveElem(&w);
+	c = l;
+
+	w = strtok(NULL, idler);
+
+	while (w != NULL)
 	{
-		el2 = ElemInit(istr);
-		el1->next = el2;
-		el1 = el2;
-		istr = strtok(NULL, sep);
+		n = ActiveElem(&w);
+		(*c).following = n;
+		c = n;
+		
+		w = strtok(NULL, idler);
 	}
 
-	bsort(head);
+	bsort(l);
 
-	el1 = head->next;
-	while (el1 != NULL)
+	c = l;
+	while (c != NULL)
 	{
-		printf("%s ", el1->word);
-		el2 = el1->next;
+		printf("%s\n", (*c).w);
+		n = (*c).following;
 
-		el1->next = NULL;
-		free(el1->word);
-		free(el1);
+		free(c);
 
-		el1 = el2;
+		c = n;
 	}
-	head->next = NULL;
-	free(head->word);
-	free(head);
+
+	free(fsrc);
+
 	return 0;
 }
