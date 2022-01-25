@@ -1,0 +1,6 @@
+(define (day-of-week d m y)
+  (if (= m 2)
+      (modulo (+ d 31 (quotient (* 5 (modulo (- y 1) 100)) 4) (floor (/ (* -7 (quotient (- y 1) 100)) 4))) 7)
+      (if (= m 1)
+          (modulo (+ d (quotient (- (* 13 (modulo (- m 2) 12)) 1) 5) (quotient (* 5 (modulo (- y 1) 100)) 4) (floor (/ (* -7 (quotient (- y 1) 100)) 4))) 7)
+          (modulo (+ d (quotient (- (* 13 (modulo (- m 2) 12)) 1) 5) (quotient (* 5 (modulo y 100)) 4) (floor (/ (* -7 (quotient y 100)) 4))) 7))))

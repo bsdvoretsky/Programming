@@ -1,0 +1,17 @@
+(define (trib n)
+  (let ((known-results '()))
+    (let ((res (assoc n known-results)))
+    (define (loop k)
+      (let* ((arg k)
+             (res (assoc arg known-results)))
+        (if (= k (+ n 1))
+            (cadar known-results)
+            (if res
+                (loop (+ k 1))
+                (cond ((or (= k 1) (= k 2)) (set! known-results (cons (list arg 0) known-results)) (loop (+ k 1)))
+                      ((= k 3) (set! known-results (cons (list arg 1) known-results)) (loop (+ k 1)))
+                      (else
+                       (let ((res (+ (cadar known-results) (cadadr known-results) (car (cdaddr known-results)))))
+                         (set! known-results (cons (list arg res) known-results)) (loop (+ k 1)))))))))
+    (cond (res (cadr res))
+          (else (loop 1))))))

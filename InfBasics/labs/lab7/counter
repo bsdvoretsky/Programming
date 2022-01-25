@@ -1,0 +1,17 @@
+#!/bin/bash
+echo 0 > tempfile
+rec() {
+  if [ -d "$1" ]; then
+    ls "$1" | while read name; do
+      rec "$1/$name"
+    done
+  else
+  	if [[ ($1 == *.c) || ($1 == *.h) ]]; then
+	    i=$(($(cat tempfile) + $(cat $1 | grep '[^ ]' | wc -l)))
+	    echo $i > tempfile
+	fi
+  fi
+}
+rec "$1"
+echo "$(cat tempfile)"
+rm tempfile

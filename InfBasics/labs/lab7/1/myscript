@@ -1,0 +1,9 @@
+#!/bin/bash
+i=0
+trap "pkill $(basename $1)" EXIT
+while :; do
+	pkill $(basename $1)
+	$1 2> errorcontent$i 1> correctcontent$i &
+	i=$((i+1));
+sleep $2m;
+done
