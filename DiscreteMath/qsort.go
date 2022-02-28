@@ -1,9 +1,4 @@
-package main
-import "fmt"
-
-func qsort(i, j int, 
-		   less func(i, j int) bool,
-		   swap func(i, j int)) {
+func subqsort(i, j int) {
 	if i < j {
 		q := (i + j) / 2
 		l := i
@@ -22,21 +17,13 @@ func qsort(i, j int,
 			l++
 			r--
 		}
-		qsort(i, r, less, swap)
-		qsort(r + 1, j, less, swap)
+		subqsort(i, r)
+		subqsort(r + 1, j)
 	}
 }
 
-var a = [12]int{5, 2, 2, 1, -3, 4, 3, 5, -4, 2, 2, 1}
-
-func less (i, j int) bool {
-	return a[i] < a[j]
-}
-func swap (i, j int) {
-	a[i], a[j] = a[j], a[i]
-}
-
-func main() {
-	qsort(0, len(a) - 1, less, swap)
-	fmt.Printf("%d\n", a);
+func qsort(n int, 
+		   less func(i, j int) bool,
+		   swap func(i, j int)) {
+	subqsort(0, n - 1)
 }
