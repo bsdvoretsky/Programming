@@ -51,9 +51,3 @@ func decode(utf8 []byte) []rune {
 	}
 	return deres
 }
-
-func main() {
-	for i := 128526; i < 128560; i++ {
-		fmt.Printf("Символ: %s, код символа: %d\nКодируем: %v\nДекодируем: %v\n\n", string(rune(i)), rune(i), encode([]rune{rune(i)}), decode(encode([]rune{rune(i)})))
-	}
-}

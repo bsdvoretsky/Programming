@@ -1,7 +1,7 @@
 package main
 import "fmt"
 
-var input_str = "(#($(#xy)($(#ab)(#ab)))(@z($(#ab)(#ab))))"
+var input_str = "(#($a($b($cd)))(@($b($cd))($a($b($cd)))))"
 var input_pos = 0
 var buff []string
 
