@@ -5,22 +5,38 @@ type Vertex struct {
 	order int
 	edge *Edge
 	marked bool
+	color string
 }
 
 type Edge struct {
 	v *Vertex
 	next *Edge
+	color string
 }
 
 func PrintGraph(graph []*Vertex) {
+	for _, v := range(graph) {
+		v.marked = false
+	}
 	fmt.Printf("graph maxcomponent {\n")
 	for _, v := range(graph) {
-		fmt.Printf("    %d;\n", v.order)
+		if v.color == "red" {
+			fmt.Printf("    %d [color=red];\n", v.order)
+		} else {
+			fmt.Printf("    %d;\n", v.order)
+		}
 	}
 	for _, v := range(graph) {
+		v.marked = true
 		c := v.edge
 		for c != nil {
-			fmt.Printf("    %d -- %d;\n", v.order, c.v.order)
+			if !c.v.marked {
+				if c.color == "red" {
+					fmt.Printf("    %d -- %d [color=red];\n", v.order, c.v.order)
+				} else {
+					fmt.Printf("    %d -- %d;\n", v.order, c.v.order)
+				}
+			}
 			c = c.next
 		}
 	}
@@ -44,6 +60,18 @@ func DFS(v *Vertex) {
 	}
 }
 
+func color(v *Vertex) {
+	v.color = "red"
+	c := v.edge
+	for c != nil {
+		c.color = "red"
+		if c.v.color != "red" {
+			color(c.v)
+		}
+		c = c.next
+	}
+}
+
 var N, M, u, v, v_temp, e_temp, v_ans, e_ans, ordmin_temp, ordmin_ans int
 var tempgraph, ansgraph []*Vertex
 
@@ -58,7 +86,7 @@ func main() {
 
 	vlist := make([]*Vertex, N)
 	for i := 0; i < N; i++ {
-		vlist[i] = &Vertex{i, nil, false}
+		vlist[i] = &Vertex{i, nil, false, ""}
 	}
 
 	for i := 0; i < N; i++ {
@@ -66,22 +94,22 @@ func main() {
 
 		c := vlist[u].edge
 		if c == nil {
-			vlist[u].edge = &Edge{vlist[v], nil}
+			vlist[u].edge = &Edge{vlist[v], nil, ""}
 		} else {
 			for c.next != nil {
 				c = c.next
 			}
-			c.next = &Edge{vlist[v], nil}
+			c.next = &Edge{vlist[v], nil, ""}
 		}
 
 		c = vlist[v].edge
 		if c == nil {
-			vlist[v].edge = &Edge{vlist[u], nil}
+			vlist[v].edge = &Edge{vlist[u], nil, ""}
 		} else {
 			for c.next != nil {
 				c = c.next
 			}
-			c.next = &Edge{vlist[u], nil}
+			c.next = &Edge{vlist[u], nil, ""}
 		}
 	}
 
@@ -100,6 +128,8 @@ func main() {
 		}
 	}
 
-	PrintGraph(ansgraph)
+	color(ansgraph[0])
+
+	PrintGraph(vlist)
 
 }
