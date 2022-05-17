@@ -1,7 +1,7 @@
 package main
 import "fmt"
 
-var input_str = "(#($a($b($cd)))(@($b($cd))($a($b($cd)))))"
+var input_str string
 var input_pos = 0
 var buff []string
 
@@ -54,5 +54,6 @@ func economExpr() int {
 }
 
 func main () {
+	fmt.Scanf("%s\n", &input_str)
 	fmt.Printf("%d\n", economExpr())
 }

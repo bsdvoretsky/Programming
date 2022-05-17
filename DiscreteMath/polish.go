@@ -1,7 +1,12 @@
 package main
-import "fmt"
+import (
+	"fmt"
+	"bufio"
+    "os"
+    "strings"
+)
 
-var input_str = "(+ (* 1 2) (* 9 0) 2 (- 1 (- 1 0)))"
+var input_str string
 var input_pos = 0
 
 func Expr() int {
@@ -61,5 +66,7 @@ func Expr() int {
 }
 
 func main() {
+	input_str, _ = bufio.NewReader(os.Stdin).ReadString('\n')
+    input_str = strings.Trim(input_str, "\n")
 	fmt.Printf("%d\n", Expr())
 }
