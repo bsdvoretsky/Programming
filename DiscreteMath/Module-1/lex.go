@@ -1,5 +1,5 @@
 package main
-import ("fmt"; "math/rand"; "time")
+import ("math/rand"; "time")
 
 // АВЛ-дерево
 
@@ -239,22 +239,4 @@ func lex(sentence string, array AssocArray) []int {
 	}
 	s = []rune {}
 	return res
-}
-
-func main() {
-	sentence := "   hello world hello   hello"
-	rand.Seed(time.Now().UTC().UnixNano())
-	 
-	// Тест для списка с пропусками
-	/*
-	l := new(SkipList)
-	l.Init(10) 
-	fmt.Println(lex(sentence, l))
-	*/
-
-	// Тест для АВЛ-дерева 
-	/*
-	t := new(AVLNode)
-	fmt.Println(lex(sentence, t)) 
-	*/
 }
