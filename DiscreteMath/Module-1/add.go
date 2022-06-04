@@ -1,3 +1,5 @@
+package main
+
 func add(a, b []int32, p int) []int32 {
 	res := []int32 {}
 	if len(a) < len(b) {
