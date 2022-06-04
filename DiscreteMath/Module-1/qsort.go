@@ -1,3 +1,5 @@
+package main
+
 func subqsort(i, j int) {
 	if i < j {
 		q := (i + j) / 2
