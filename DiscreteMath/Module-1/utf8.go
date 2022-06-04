@@ -1,5 +1,4 @@
 package main
-import "fmt"
 
 func encode(utf32 []rune) []byte {
 	enres := []byte {}
