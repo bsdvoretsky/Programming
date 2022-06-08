@@ -22,3 +22,7 @@ func add(a, b []int32, p int) []int32 {
 	}
 	return res
 }
+
+func main() {
+	
+}

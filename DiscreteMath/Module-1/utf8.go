@@ -50,3 +50,7 @@ func decode(utf8 []byte) []rune {
 	}
 	return deres
 }
+
+func main() {
+	
+}
