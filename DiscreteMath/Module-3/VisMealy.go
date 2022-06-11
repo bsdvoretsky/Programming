@@ -36,10 +36,10 @@ func main() {
 	}
 
 	fmt.Printf("digraph {\n")
-	fmt.Printf("\trankdir = LR\n")
+	fmt.Printf("    rankdir = LR\n")
 	for i := 0; i < n; i++ {
 		for j := 0; j < m; j++ {
-			fmt.Printf("\t%d -> %d [lable = \"%c(%s)\"]\n", i, transition_matrix[i][j], j + 97, outputs_matrix[i][j])
+			fmt.Printf("    %d -> %d [label = \"%c(%s)\"]\n", i, transition_matrix[i][j], j + 97, outputs_matrix[i][j])
 		}
 	}
 	fmt.Printf("}\n")
