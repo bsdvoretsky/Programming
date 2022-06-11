@@ -1,72 +1,82 @@
 package main
+
 import (
 	"fmt"
+	"os"
 	"bufio"
-    "os"
-    "strings"
 )
 
-var input_str string
-var input_pos = 0
+var (
+	pos int
+	prog string
+	bufstdin *bufio.Scanner
+	bufstdout *bufio.Writer
+)
+
+func error() {
+	fmt.Fprint(bufstdout, "syntax error at ", pos, "\n")
+	bufstdout.Flush()
+	os.Exit(0)
+}
 
 func Expr() int {
-	q := 1
-	if input_str[input_pos] == '(' {
-		input_pos++
-		res := 0
-		if input_str[input_pos] == '*' {
-			input_pos++
-			res = Expr()
-			for q != 0 {
-				input_pos++
-				if input_str[input_pos] == '(' {
-					q++
-				} else if input_str[input_pos] == ')' {
-					q--
+	if prog[pos] == '(' {
+		pos++
+		if pos < len(prog) {
+			c := prog[pos]
+			pos++
+			if pos >= len(prog) {
+				error()
+			}
+			b := Expr()
+			if c == '+' {
+				for pos < len(prog) - 1 && prog[pos] != ')' {
+					v := Expr()
+					b += v	
 				}
-				if q != 0 {
-					res *= Expr()
+			} else if c == '-' {
+				for pos < len(prog) - 1 && prog[pos] != ')' {
+					v := Expr()
+					b -= v		
+				}
+			} else if c == '*' {
+				for pos < len(prog) - 1 && prog[pos] != ')' {
+					v := Expr()
+					b *= v	
 				}
 			}
-		} else if input_str[input_pos] == '+' {
-			input_pos++
-			res = Expr()
-			for q != 0 {
-				input_pos++
-				if input_str[input_pos] == '(' {
-					q++
-				} else if input_str[input_pos] == ')' {
-					q--
-				}
-				if q != 0 {
-					res += Expr()
-				}
+			if prog[pos] == ')' {
+				pos++
+				return b
+			} else {
+				error()
 			}
-		} else if input_str[input_pos] == '-' {
-			input_pos++
-			res = Expr()
-			for q != 0 {
-				input_pos++
-				if input_str[input_pos] == '(' {
-					q++
-				} else if input_str[input_pos] == ')' {
-					q--
-				}
-				if q != 0 {
-					res -= Expr()
-				}
-			}
+		} else {
+			error()
 		}
-		return res
-	} else if input_str[input_pos] != ' ' {
-		return int(input_str[input_pos]) - 48
+	} else if prog[pos] >= '0' &&
+			  prog[pos] <= '9' {
+		return Number()
+	} else {
+		error()
 	}
-	input_pos++
-	return Expr()
+	return -1
+}
+
+func Number() int {
+	pos++
+	return int(prog[pos - 1]) - 48
 }
 
 func main() {
-	input_str, _ = bufio.NewReader(os.Stdin).ReadString('\n')
-    input_str = strings.Trim(input_str, "\n")
-	fmt.Printf("%d\n", Expr())
+	pos = 0
+	bufstdin = bufio.NewScanner(os.Stdin)
+	bufstdout = bufio.NewWriter(os.Stdout)
+	prog = ""
+	bufstdin.Split(bufio.ScanWords)
+	for bufstdin.Scan() {
+		prog += string(bufstdin.Bytes())
+	}
+	fmt.Fprint(bufstdout, Expr(), "\n")
+	bufstdout.Flush()
 }
