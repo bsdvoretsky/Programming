@@ -1,5 +1,5 @@
 package main
-import ("math/rand"; "time")
+import ("math/rand")
 
 // АВЛ-дерево
 
@@ -239,4 +239,8 @@ func lex(sentence string, array AssocArray) []int {
 	}
 	s = []rune {}
 	return res
+}
+
+func main() {
+	
 }

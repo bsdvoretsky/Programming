@@ -89,11 +89,7 @@ func main () {
 		}
 	}
 
-	for i := 0; i < n; i++ {
-		if states[i].count_of_parents == 0 {
-			DFS(states[i])
-		}
-	}
+	DFS(states[q0])
 
 	fmt.Printf("%d\n%d\n%d\n", n, m, 0)
 

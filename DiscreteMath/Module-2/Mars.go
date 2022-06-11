@@ -166,7 +166,7 @@ func main() {
 		for j := 0; j < N / 2 + 1; j++ {
 			a, b, g_1, g_2, ok := checkComponent(components[len(components) - i])
 			if !ok {
-				fmt.Printf("No solution.\n")
+				fmt.Printf("No solution\n")
 				os.Exit(0)
 			}
 
