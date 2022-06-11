@@ -1,26 +1,45 @@
 package main
 
-func subqsort(i, j int, less func(i, j int) bool, swap func(i, j int)) {
-	if i < j {
-		q := (i + j) / 2
-		l := i
-		r := j
-		for l <= r {
-			for less(l, q) {
-				l++
-			}
-			for less(q, r) {
-				r--
-			}
-			if l >= r {
-				break
-			}
-			swap(l, r)
+func partition (i, j int, 
+				less func(i, j int) bool,
+		   		swap func(i, j int)) int {
+	l := i
+	r := j
+	q := (l + r) / 2
+
+	for true {
+		for less(l, q) {
 			l++
+		}
+		for less(q, r) {
 			r--
 		}
-		subqsort(i, r, less, swap)
-		subqsort(r + 1, j, less, swap)
+
+		if l >= r {
+			return r
+		}
+
+		if l == q {
+			q = r
+		} else if r == q {
+			q = l
+		}
+
+		swap(l, r)
+		l++
+		r--
+	}
+
+	return -1
+}
+
+func subqsort(i, j int,
+			  less func(i, j int) bool,
+			  swap func(i, j int)) {
+	if i < j {
+		p := partition(i, j, less, swap)
+		subqsort(i, p, less, swap)
+		subqsort(p + 1, j, less, swap)
 	}
 }
 
