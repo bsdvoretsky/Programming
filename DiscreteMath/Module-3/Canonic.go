@@ -1,16 +1,33 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+	"bufio"
+	"sort"
+)
 
 var (
 	n 				  int 		// Кол-во состояний
 	m 				  int 		// Размер входного алфавита
 	q0 				  int 		// Номер начального состояния
-	states 			  []*State
+	states 			  States
 	transition_matrix [][]int
 	outputs_matrix 	  [][]string
 	num				  int 	    // Текущий номер состояния
 )
+
+type States []*State
+
+func (states States) Len() int { 
+	return len(states) 
+}
+func (states States) Swap(i, j int) { 
+	states[i], states[j] = states[j], states[i] 
+}
+func (states States) Less(i, j int) bool { 
+	return states[i].order < states[j].order 
+}
 
 type State struct { 
 	order   		 int
@@ -41,9 +58,12 @@ func main () {
 	num = 0
 	states = []*State{}
 
-	fmt.Scanf("%d", &n)
-	fmt.Scanf("%d", &m)
-	fmt.Scanf("%d", &q0)
+	bufstdin := bufio.NewReader(os.Stdin)
+	bufstdout := bufio.NewWriter(os.Stdout)
+
+	fmt.Fscan(bufstdin, &n)
+	fmt.Fscan(bufstdin, &m)
+	fmt.Fscan(bufstdin, &q0)
 
 	transition_matrix = make([][]int, n)
 	outputs_matrix = make([][]string, n)
@@ -59,7 +79,7 @@ func main () {
 	for i := 0; i < n; i++ {
 		for j := 0; j < m; j++ {
 			var t int
-			fmt.Scanf("%d", &t)
+			fmt.Fscan(bufstdin, &t)
 			transition_matrix[i][j] = t
 		}
 	}
@@ -67,7 +87,7 @@ func main () {
 	for i := 0; i < n; i++ {
 		for j := 0; j < m; j++ {
 			var o string
-			fmt.Scanf("%s", &o)
+			fmt.Fscan(bufstdin, &o)
 			outputs_matrix[i][j] = o
 		}
 	}
@@ -91,27 +111,32 @@ func main () {
 
 	DFS(states[q0])
 
-	fmt.Printf("%d\n%d\n%d\n", n, m, 0)
+	fmt.Fprint(bufstdout, n)
+	fmt.Fprint(bufstdout, "\n")
 
-	for i := 0; i < n - 1; i++ {
-		for j := i + 1; j < n; j++ {
-			if states[i].order > states[j].order {
-				states[i], states[j] = states[j], states[i]
-			}
+	fmt.Fprint(bufstdout, m)
+	fmt.Fprint(bufstdout, "\n")
+
+	fmt.Fprint(bufstdout, 0)
+	fmt.Fprint(bufstdout, "\n")
+
+	sort.Sort(states)
+
+	for i := 0; i < n; i++ {
+		for e := states[i].edges; e != nil; e = e.next {
+			fmt.Fprint(bufstdout, e.s.order)
+			fmt.Fprint(bufstdout, " ")
 		}
+		fmt.Fprint(bufstdout, "\n")
 	}
 
 	for i := 0; i < n; i++ {
 		for e := states[i].edges; e != nil; e = e.next {
-			fmt.Printf("%d ", e.s.order)
+			fmt.Fprint(bufstdout, e.out)
+			fmt.Fprint(bufstdout, " ")
 		}
-		fmt.Println()
+		fmt.Fprint(bufstdout, "\n")
 	}
 
-	for i := 0; i < n; i++ {
-		for e := states[i].edges; e != nil; e = e.next {
-			fmt.Printf("%s ", e.out)
-		}
-		fmt.Println()
-	}
+	bufstdout.Flush()
 }
