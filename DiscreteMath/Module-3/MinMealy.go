@@ -1,15 +1,27 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"sort"
+	"bufio"
+	"os"
+)
 
 type State struct {
 	i       int
 	parent  *State
 	depth   int
 	marked  bool
-	trans   []*State
+	trans   States
 	outs    []string
 }
+
+type States []*State
+
+func (s States) Len() int { return len(s) }
+func (s States) Less(i, j int) bool { return s[i].i < s[j].i }
+func (s States) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
+
 
 var (
 	n, m, q0, num int
@@ -37,7 +49,7 @@ func Find(x *State) *State {
 	}
 }
 
-func Split1(automat []*State, mt *int, pi *[]*State) {
+func Split1(automat States, mt *int, pi *States) {
 	for _, q := range(automat) {
 		q.parent = q
 		q.depth = 0
@@ -65,7 +77,7 @@ func Split1(automat []*State, mt *int, pi *[]*State) {
 	}
 }
 
-func Split(automat []*State, mt *int, pi *[]*State) {
+func Split(automat States, mt *int, pi *States) {
 	for _, q := range(automat) {
 		q.parent = q
 		q.depth = 0
@@ -95,9 +107,9 @@ func Split(automat []*State, mt *int, pi *[]*State) {
 	}
 }
 
-func AufenkampHohn(automat []*State) []*State {
+func AufenkampHohn(automat States) States {
 	var m1 int
-	pi := make([]*State, n)
+	pi := make(States, n)
 	Split1(automat, &m1, &pi)
 
 	for {
@@ -109,22 +121,22 @@ func AufenkampHohn(automat []*State) []*State {
 		m1 = m2
 	}
 
-	ans := []*State{}
+	ans := States{}
 
 	for _, q := range(automat) {
 		qt := pi[q.i]
 		if !find(ans, qt) {
 			ans = append(ans, qt)
 			for i := 0; i < m; i++ {
-				ans[len(ans) - 1].trans[i] = pi[q.trans[i].i]
-				ans[len(ans) - 1].outs[i] = q.outs[i]
+				qt.trans[i] = pi[q.trans[i].i]
+				qt.outs[i] = q.outs[i]
 			}
 		}
 	}
 	return ans
 }
 
-func find(automat []*State, q *State) bool {
+func find(automat States, q *State) bool {
 	for _, s := range(automat) {
 		if s == q {
 			return true
@@ -147,52 +159,54 @@ func DFS(s *State) {
 
 func main() {
 	num = 0
-	fmt.Scanf("%d", &n)
-	fmt.Scanf("%d", &m)
-	fmt.Scanf("%d", &q0)
+	bufstdin := bufio.NewReader(os.Stdin)
+	fmt.Fscan(bufstdin, &n, &m, &q0)
 
-	automat := make([]*State, n)
+	automat := make(States, n)
 
 	for i := 0; i < n; i++ {
-		automat[i] = &State{i, nil, 0, false, make([]*State, m), make([]string, m)}
+		automat[i] = &State{i, nil, 0, false, make(States, m), make([]string, m)}
 	}
 
 	for i := 0; i < n; i++ {
 		for j := 0; j < m; j++ {
 			var t int
-			fmt.Scanf("%d", &t)
+			fmt.Fscan(bufstdin, &t)
 			automat[i].trans[j] = automat[t]
 		}
 	}
 
 	for i := 0; i < n; i++ {
 		for j := 0; j < m; j++ {
-			fmt.Scanf("%s", &automat[i].outs[j])
+			var s string
+			fmt.Fscan(bufstdin, &s)
+			automat[i].outs[j] = s
 		}
 	}
 
 	min_automat := AufenkampHohn(automat)
 
 	for _, q := range(min_automat) {
-		if q.i == q0 {
+		fl := true
+		for i := 0; i < m; i++ {
+			if q.outs[i] != automat[q0].outs[i] {
+				fl = false
+				break
+			}
+		}
+		if fl {
 			DFS(q)
 			break
 		}
 	}
 	
-	for i := 0; i < len(min_automat) - 1; i++ {
-		for j := i + 1; j < len(min_automat); j++ {
-			if min_automat[j].i < min_automat[i].i {
-				min_automat[j], min_automat[i] = min_automat[i], min_automat[j]
-			}
-		}
-	}
+	sort.Sort(min_automat)
 
 	fmt.Printf("digraph {\n")
 	fmt.Printf("	rankdir = LR\n")
 	for _, q := range(min_automat) {
 		for i := 0; i < m; i++ {
-			fmt.Printf("	%d -> %d [lable = \"%s(%s)\"]\n", q.i, q.trans[i].i, string(i + 97), q.outs[i])
+			fmt.Printf("	%d -> %d [label = \"%s(%s)\"]\n", q.i, q.trans[i].i, string(i + 97), q.outs[i])
 		}
 	}
 	fmt.Printf("}\n")

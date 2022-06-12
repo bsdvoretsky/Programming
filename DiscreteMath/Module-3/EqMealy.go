@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
+	"sort"
+	"bufio"
 )
 
 type State struct {
@@ -10,13 +12,20 @@ type State struct {
 	parent  *State
 	depth   int
 	marked  bool
-	trans   []*State
+	trans   States
 	outs    []string
 }
+
+type States []*State
+
+func (s States) Len() int { return len(s) }
+func (s States) Less(i, j int) bool { return s[i].i < s[j].i }
+func (s States) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 
 var (
 	n1, m1, q10 int
 	n2, m2, q20 int
+	num int
 )
 
 func Union(x, y *State) {
@@ -41,7 +50,7 @@ func Find(x *State) *State {
 	}
 }
 
-func Split1(automat []*State, mt *int, pi *[]*State) {
+func Split1(automat States, mt *int, pi *States) {
 	for _, q := range(automat) {
 		q.parent = q
 		q.depth = 0
@@ -69,7 +78,7 @@ func Split1(automat []*State, mt *int, pi *[]*State) {
 	}
 }
 
-func Split(automat []*State, mt *int, pi *[]*State) {
+func Split(automat States, mt *int, pi *States) {
 	for _, q := range(automat) {
 		q.parent = q
 		q.depth = 0
@@ -99,9 +108,9 @@ func Split(automat []*State, mt *int, pi *[]*State) {
 	}
 }
 
-func AufenkampHohn(automat []*State) []*State {
+func AufenkampHohn(automat States) States {
 	var m1 int
-	pi := make([]*State, len(automat))
+	pi := make(States, len(automat))
 	Split1(automat, &m1, &pi)
 
 	for {
@@ -113,22 +122,22 @@ func AufenkampHohn(automat []*State) []*State {
 		m1 = m2
 	}
 
-	ans := []*State{}
+	ans := States{}
 
 	for _, q := range(automat) {
 		qt := pi[q.i]
 		if !find(ans, qt) {
 			ans = append(ans, qt)
 			for i := 0; i < len(automat[0].outs); i++ {
-				ans[len(ans) - 1].trans[i] = pi[q.trans[i].i]
-				ans[len(ans) - 1].outs[i] = q.outs[i]
+				qt.trans[i] = pi[q.trans[i].i]
+				qt.outs[i] = q.outs[i]
 			}
 		}
 	}
 	return ans
 }
 
-func find(automat []*State, q *State) bool {
+func find(automat States, q *State) bool {
 	for _, s := range(automat) {
 		if s == q {
 			return true
@@ -137,99 +146,107 @@ func find(automat []*State, q *State) bool {
 	return false
 }
 
-func DFS(s *State, num int) {
+func DFS(s *State) {
 	s.i = num
+	num++
 	s.marked = true
 
 	for i := 0; i < len(s.outs); i++ {
 		if !s.trans[i].marked {
-			DFS(s.trans[i], num + 1)
+			DFS(s.trans[i])
 		}
 	}
 }
 
 func main() {
-	fmt.Scanf("%d", &n1)
-	fmt.Scanf("%d", &m1)
-	fmt.Scanf("%d", &q10)
+	num = 0
 
-	automat1 := make([]*State, n1)
+	bufstdin := bufio.NewReader(os.Stdin)
+
+	fmt.Fscan(bufstdin, &n1, &m1, &q10)
+
+	automat1 := make(States, n1)
 
 	for i := 0; i < n1; i++ {
-		automat1[i] = &State{i, nil, 0, false, make([]*State, m1), make([]string, m1)}
+		automat1[i] = &State{i, nil, 0, false, make(States, m1), make([]string, m1)}
 	}
 
 	for i := 0; i < n1; i++ {
 		for j := 0; j < m1; j++ {
 			var t int
-			fmt.Scanf("%d", &t)
+			fmt.Fscan(bufstdin, &t)
 			automat1[i].trans[j] = automat1[t]
 		}
 	}
 
 	for i := 0; i < n1; i++ {
 		for j := 0; j < m1; j++ {
-			fmt.Scanf("%s", &automat1[i].outs[j])
+			var s string
+			fmt.Fscan(bufstdin, &s)
+			automat1[i].outs[j] = s
 		}
 	}
 
 	min_automat1 := AufenkampHohn(automat1)
 
 	for _, q := range(min_automat1) {
-		if q.i == q10 {
-			DFS(q, 0)
+		fl := true
+		for i := 0; i < m1; i++ {
+			if q.outs[i] != automat1[q10].outs[i] {
+				fl = false
+				break
+			}
+		}
+		if fl {
+			DFS(q)
 			break
 		}
 	}
 	
-	for i := 0; i < len(min_automat1) - 1; i++ {
-		for j := i + 1; j < len(min_automat1); j++ {
-			if min_automat1[j].i < min_automat1[i].i {
-				min_automat1[j], min_automat1[i] = min_automat1[i], min_automat1[j]
-			}
-		}
-	}
+	sort.Sort(min_automat1)
 
-	fmt.Scanf("%d", &n2)
-	fmt.Scanf("%d", &m2)
-	fmt.Scanf("%d", &q20)
+	num = 0
 
-	automat2 := make([]*State, n2)
+	fmt.Fscan(bufstdin, &n2, &m2, &q20)
+
+	automat2 := make(States, n2)
 
 	for i := 0; i < n2; i++ {
-		automat2[i] = &State{i, nil, 0, false, make([]*State, m2), make([]string, m2)}
+		automat2[i] = &State{i, nil, 0, false, make(States, m2), make([]string, m2)}
 	}
 
 	for i := 0; i < n2; i++ {
 		for j := 0; j < m2; j++ {
 			var t int
-			fmt.Scanf("%d", &t)
+			fmt.Fscan(bufstdin, &t)
 			automat2[i].trans[j] = automat2[t]
 		}
 	}
 
 	for i := 0; i < n2; i++ {
 		for j := 0; j < m2; j++ {
-			fmt.Scanf("%s", &automat2[i].outs[j])
+			var s string
+			fmt.Fscan(bufstdin, &s)
+			automat2[i].outs[j] = s
 		}
 	}
 
 	min_automat2 := AufenkampHohn(automat2)
 
 	for _, q := range(min_automat2) {
-		if q.i == q20 {
-			DFS(q, 0)
+		fl := true
+		for i := 0; i < m2; i++ {
+			if q.outs[i] != automat2[q20].outs[i] {
+				fl = false
+			}
+		}
+		if fl {
+			DFS(q)
 			break
 		}
 	}
 	
-	for i := 0; i < len(min_automat2) - 1; i++ {
-		for j := i + 1; j < len(min_automat2); j++ {
-			if min_automat2[j].i < min_automat2[i].i {
-				min_automat2[j], min_automat2[i] = min_automat2[i], min_automat2[j]
-			}
-		}
-	}
+	sort.Sort(min_automat2)
 
 	if len(min_automat1) != len(min_automat2) || m1 != m2 {
 		fmt.Printf("NOT EQUAL\n")
@@ -237,8 +254,8 @@ func main() {
 	} else {
 		for i := 0; i < len(min_automat1); i++ {
 			for j := 0; j < m1; j++ {
-				if min_automat2[i].trans[j].i != min_automat2[i].trans[j].i ||
-				   min_automat2[i].outs[j] != min_automat2[i].outs[j] {
+				if min_automat1[i].trans[j].i != min_automat2[i].trans[j].i ||
+				   min_automat1[i].outs[j] != min_automat2[i].outs[j] {
 					fmt.Printf("NOT EQUAL\n")
 					os.Exit(0)
 				}
