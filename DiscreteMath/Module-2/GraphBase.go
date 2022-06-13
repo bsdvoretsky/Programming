@@ -1,5 +1,10 @@
 package main
-import "fmt"
+
+import (
+	"fmt"
+	"os"
+	"bufio"
+)
 
 type Graph struct {
 	vertices []*Vertex 
@@ -94,20 +99,22 @@ var N, M, u, v, time, count int
 var s Stack
 
 func main() {
+	bufstdin := bufio.NewReader(os.Stdin)
+
 	time = 1
 	count = 0
 	g := Graph{}
 	s = Stack{}
 
-	fmt.Scanf("%d\n", &N)
+	fmt.Fscan(bufstdin, &N)
 	g.vertices = make([]*Vertex, N)
 	for i, _ := range(g.vertices) {
 		g.vertices[i] = &Vertex{i, nil, 0, 0, -1}
 	}
 
-	fmt.Scanf("%d\n", &M)
+	fmt.Fscan(bufstdin, &M)
 	for i := 0; i < M; i++ {
-		fmt.Scanf("%d %d\n", &u, &v)
+		fmt.Fscan(bufstdin, &u, &v)
 		e := g.vertices[u].edges
 		if e == nil {
 			g.vertices[u].edges = &Edge{g.vertices[v], nil}

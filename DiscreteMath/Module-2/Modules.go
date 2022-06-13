@@ -8,15 +8,15 @@ import (
 type Vertices []*Vertex
 
 type Vertex struct {
-	name string
+	name  string
 	edges *Edge
-	comp int
-	T1 int
-	low int
+	comp  int
+	T1    int
+	low   int
 }
 
 type Edge struct {
-	v *Vertex
+	v    *Vertex
 	next *Edge
 }
 
@@ -29,7 +29,7 @@ var s Stack
 
 type Stack struct {
 	vertices Vertices
-	count int
+	count    int
 }
 
 func (s *Stack) InitStack (n int) {
@@ -95,7 +95,6 @@ func find(name string) int {
 func AddLex(lex string) {
 	lexemes = append(lexemes, lex)
 	pos++
-	Space()
 }
 
 func Error() {
@@ -106,7 +105,6 @@ func Error() {
 func Program() {
 	Function()
 	if pos < len(line) - 1 {
-		Space()
 		Program()
 	}
 }
@@ -119,7 +117,6 @@ func Function() {
 	} else {
 		cur_1 = find(lexemes[len(lexemes)-1])
 	}
-	Space()
 	if line[pos] == '(' {
 		AddLex("(")
 		FormalArgsList()
@@ -241,10 +238,10 @@ func Term() {
 	Factor()
 	if line[pos] == '*' {
 		AddLex("*")
-		Factor()
+		Term()
 	} else if line[pos] == '/' {
 		AddLex("/")
-		Factor()
+		Term()
 	}
 }
 
@@ -289,7 +286,6 @@ func Factor() {
 		}
 	} else {
 		Number()
-		Space()
 	}
 }
 
@@ -304,7 +300,6 @@ func Number() {
 	} else {
 		pos--
 		AddLex(string(temp))
-		Space()
 	}
 }
 
@@ -322,12 +317,6 @@ func ExprList() {
 	}
 }
 
-func Space() {
-	for pos < len(line) && line[pos] == ' ' || line[pos] == '\t' {
-		pos++
-	}
-}
-
 func main() {
 	time = 1
 	count = 0
@@ -338,10 +327,15 @@ func main() {
 
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
-		line = scanner.Text()
+		str := scanner.Text()
+		line = ""
+		for _, c := range(str) {
+			if c != ' ' && c != '\t' {
+				line += string(c)
+			}
+		}
 		if len(line) > 0 {
 			pos = 0
-			Space()
 			Program()
 		}
 	} 
