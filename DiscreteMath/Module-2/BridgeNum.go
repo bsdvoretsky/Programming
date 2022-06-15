@@ -1,26 +1,36 @@
 package main
-import "fmt"
+
+import (
+	"fmt"
+	"os"
+	"bufio"
+)
 
 type Vetrex struct {
-	order int
-	edge *Edge
+	order  int
+	edge   *Edge
 	parent *Vetrex
-	marked bool
+	mark   string
+	comp   int
 }
 
+type Vertices []*Vetrex
+
 type Edge struct {
-	v *Vetrex
+	v    *Vetrex
 	next *Edge
 }
 
 type Queque struct {
-	arr []*Vetrex
+	arr   Vertices
 	count int
+	begin int
 }
 
 func (q *Queque) InitQueque () {
-	q.arr = []*Vetrex{}
+	q.arr = Vertices{}
 	q.count = 0
+	q.begin = 0
 }
 
 func (q *Queque) Push (v *Vetrex) {
@@ -29,9 +39,10 @@ func (q *Queque) Push (v *Vetrex) {
 }
 
 func (q *Queque) Dequeque () *Vetrex {
-	t := q.arr[0]
-	for i := 1; i < q.count; i++ {
-		q.arr[i - 1] = q.arr[i]
+	t := q.arr[q.begin]
+	q.begin++;
+	if q.begin == len(q.arr) {
+		q.begin = 0
 	}
 	q.count--
 	return t;
@@ -41,45 +52,57 @@ func (q *Queque) empty() bool {
 	return q.count == 0
 }
 
-func DFS_1(v *Vetrex) {
-	c := v.edge
-	v.marked = true
+func VisitVertex1(v *Vetrex) {
+	v.mark = "grey"
 	queque.Push(v)
-	for c != nil {
-		if !c.v.marked {
-			c.v.parent = v
-			DFS_1(c.v)
+
+	e := v.edge
+	for e != nil {
+		if e.v.mark == "white" {
+			e.v.parent = v
+			VisitVertex1(e.v)
 		}
-		c = c.next
+		e = e.next
+	}
+
+	v.mark = "black"
+}
+
+func VisitVertex2(v *Vetrex, components int) {
+	v.comp = components
+
+	e := v.edge
+	for e != nil {
+		if e.v.comp == -1 && e.v.parent != v {
+			VisitVertex2(e.v, components)
+		} else if e.v.comp != -1 && e.v.comp != components {
+			res++
+		}
+		e = e.next
 	}
 }
 
-func DFS_2(v *Vetrex) {
-	v.marked = true
-	c := v.edge
-	for c != nil {
-		if !c.v.marked && c.v.parent != v {
-			DFS_2(c.v)
-		}
-		c = c.next
-	}
-}
 
-var N, M, u, v, res int
+
+var N, M, u, v, components, res int
 var queque Queque
 
 func main() {
+	bufstdin := bufio.NewReader(os.Stdin)
+
+	components = 0
 	res = 0
 	queque.InitQueque()
-	fmt.Scanf("%d", &N)
-	fmt.Scanf("%d", &M)
-	vlist := make([]*Vetrex, N)
+
+	fmt.Fscan(bufstdin, &N, &M)
+
+	vlist := make(Vertices, N)
 	for i := 0; i < N; i++ {
-		vlist[i] = &Vetrex{i, nil, nil, false}
+		vlist[i] = &Vetrex{i, nil, nil, "white", -1}
 	}
 
 	for i := 0; i < M; i++ {
-		fmt.Scanf("%d %d\n", &u, &v)
+		fmt.Fscan(bufstdin, &u, &v)
 
 		c := vlist[u].edge
 		if c == nil {
@@ -103,23 +126,18 @@ func main() {
 	}
 
 	for _, v := range(vlist) {
-		if !v.marked {
-			DFS_1(v)
+		if v.mark == "white" {
+			VisitVertex1(v)
 		}
-	}
-
-	for _, v := range(vlist) {
-		v.marked = false
 	}
 
 	for !queque.empty() {
-		t := queque.Dequeque()
-		if !t.marked {
-			DFS_2(t)
-			res++
+		u := queque.Dequeque()
+		if u.comp == -1 {
+			VisitVertex2(u, components)
+			components++
 		}
 	}
 
-	fmt.Println(res - 1)
-
+	fmt.Printf("%d", res)
 }

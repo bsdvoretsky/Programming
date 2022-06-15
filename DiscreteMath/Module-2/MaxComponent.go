@@ -1,55 +1,68 @@
 package main
-import "fmt"
+
+import (
+	"fmt"
+	"bufio"
+	"os"
+)
 
 type Vertex struct {
-	order int
-	edge *Edge
+	order  int
+	edge   *Edge
 	marked bool
-	color string
+	color  string
 }
 
 type Edge struct {
-	v *Vertex
-	next *Edge
+	v     *Vertex
+	next  *Edge
 	color string
 }
 
-func PrintGraph(graph []*Vertex) {
+type Vertices []*Vertex
+
+func PrintGraph(graph Vertices) {
+
 	for _, v := range(graph) {
 		v.marked = false
 	}
-	fmt.Printf("graph maxcomponent {\n")
+
+	fmt.Printf("graph {\n")
 	for _, v := range(graph) {
 		if v.color == "red" {
-			fmt.Printf("    %d [color=red];\n", v.order)
+			fmt.Printf("    %d [color = red]\n", v.order)
 		} else {
-			fmt.Printf("    %d;\n", v.order)
+			fmt.Printf("    %d\n", v.order)
 		}
 	}
+
 	for _, v := range(graph) {
 		v.marked = true
 		c := v.edge
 		for c != nil {
 			if !c.v.marked {
 				if c.color == "red" {
-					fmt.Printf("    %d -- %d [color=red];\n", v.order, c.v.order)
+					fmt.Printf("    %d -- %d [color = red]\n", v.order, c.v.order)
 				} else {
-					fmt.Printf("    %d -- %d;\n", v.order, c.v.order)
+					fmt.Printf("    %d -- %d\n", v.order, c.v.order)
 				}
 			}
 			c = c.next
 		}
 	}
 	fmt.Printf("}\n")
+
 }
 
 func DFS(v *Vertex) {
 	v.marked = true
+
 	if v.order < ordmin_temp {
 		ordmin_temp = v.order
 	}
 	v_temp++
 	tempgraph = append(tempgraph, v)
+
 	c := v.edge
 	for c != nil {
 		if !c.v.marked {
@@ -61,7 +74,9 @@ func DFS(v *Vertex) {
 }
 
 func color(v *Vertex) {
+
 	v.color = "red"
+
 	c := v.edge
 	for c != nil {
 		c.color = "red"
@@ -70,27 +85,32 @@ func color(v *Vertex) {
 		}
 		c = c.next
 	}
+
 }
 
 var N, M, u, v, v_temp, e_temp, v_ans, e_ans, ordmin_temp, ordmin_ans int
-var tempgraph, ansgraph []*Vertex
+var tempgraph, ansgraph Vertices
 
 func main() {
+	bufstdin := bufio.NewReader(os.Stdin)
+
 	v_ans = 0
 	e_ans = 0
+	v_temp = 0
+	e_temp = 0
 	ordmin_ans = N
 	ordmin_temp = N
-	tempgraph = []*Vertex{}
-	fmt.Scanf("%d", &N);
-	fmt.Scanf("%d", &M);
+	tempgraph = Vertices{}
 
-	vlist := make([]*Vertex, N)
+	fmt.Fscan(bufstdin, &N, &M)
+
+	vlist := make(Vertices, N)
 	for i := 0; i < N; i++ {
 		vlist[i] = &Vertex{i, nil, false, ""}
 	}
 
-	for i := 0; i < N; i++ {
-		fmt.Scanf("%d %d\n", &u, &v)
+	for i := 0; i < M; i++ {
+		fmt.Fscan(bufstdin, &u, &v)
 
 		c := vlist[u].edge
 		if c == nil {
@@ -125,11 +145,11 @@ func main() {
 			v_temp = 0
 			e_temp = 0
 			ordmin_temp = N
+			tempgraph = Vertices{}
 		}
 	}
 
 	color(ansgraph[0])
 
 	PrintGraph(vlist)
-
 }
