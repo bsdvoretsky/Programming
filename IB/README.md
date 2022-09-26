@@ -1,2 +1,2 @@
 ## Задачи по дисциплине "Основы информатики" 1 курс I семестр.
-Условия задач: https://github.com/bmstu-iu9/scheme-labs
+Условия задач: https://bmstu-iu9.github.io/scheme-labs/
